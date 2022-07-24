@@ -2,11 +2,219 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>wso2-is-custom-components</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <parent>
+        <groupId>org.wso2.is.custom.components</groupId>
+        <artifactId>wso2-is-custom-components</artifactId>
+        <relativePath>../../pom.xml</relativePath>
+        <version>1.0.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>custom-federated-authenticator-oidc</groupId>
+    <artifactId>org.wso2.carbon.identity.custom.fidp.authenticator</artifactId>
+    <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.org.apache.oltu.oauth2</groupId>
+            <artifactId>oltu</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.application.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <classifier>runtime</classifier>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Private-Package>
+                            org.wso2.carbon.identity.custom.fidp.authenticator.internal
+                        </Private-Package>
+                        <Import-Package>
+                            com.nimbusds.jose.util; version="${nimbusds.osgi.version.range}",
+                            javax.servlet.http; version="${imp.pkg.version.javax.servlet}",
+                            net.minidev.json; version="${net.minidev.json.imp.pkg.version.range}",
+                            org.apache.commons.codec.binary; version="${commons-codec.wso2.osgi.version.range}",
+                            org.apache.commons.lang; version="${commons-lang.wso2.osgi.version.range}",
+                            org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
+                            org.apache.oltu.oauth2.client; version="${oltu.package.import.version.range}",
+                            org.apache.oltu.oauth2.client.request; version="${oltu.package.import.version.range}",
+                            org.apache.oltu.oauth2.client.response; version="${oltu.package.import.version.range}",
+                            org.apache.oltu.oauth2.common.exception; version="${oltu.package.import.version.range}",
+                            org.apache.oltu.oauth2.common.message; version="${oltu.package.import.version.range}",
+                            org.apache.oltu.oauth2.common.message.types; version="${oltu.package.import.version.range}",
+                            org.apache.oltu.oauth2.common.parameters; version="${oltu.package.import.version.range}",
+                            org.osgi.framework; version="${osgi.framework.imp.pkg.version.range}",
+                            org.osgi.service.component; version="${osgi.service.component.imp.pkg.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.config.model;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.context;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.exception;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.model;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.util;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.common.model;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.application.common.util;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.claim.metadata.mgt;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.claim.metadata.mgt.exception;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.claim.metadata.mgt.model;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.core; version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.identity.core.util;
+                            version="${identity.framework.package.import.version.range}",
+                            org.wso2.carbon.user.api; version="${carbon.user.api.imp.pkg.version.range}",
+                            org.wso2.carbon.user.core; version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.user.core.util; version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.user.core.service; version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.user.core.tenant; version="${carbon.kernel.package.import.version.range}"
+                        </Import-Package>
+                        <Export-Package>
+                            !org.wso2.carbon.identity.custom.fidp.authenticator.internal,
+                            org.wso2.carbon.identity.custom.fidp.authenticator.*; version="${project.version}"
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <systemPropertyVariables>
+                        <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+                    </systemPropertyVariables>
+                    <reuseForks>true</reuseForks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-instrument</id>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-restore-instrumented-classes</id>
+                        <goals>
+                            <goal>restore-instrumented-classes</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report-integration</id>
+                        <goals>
+                            <goal>report-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule implementation="org.jacoco.maven.RuleConfiguration">
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>COMPLEXITY</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.00</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
